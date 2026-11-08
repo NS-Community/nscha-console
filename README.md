@@ -95,17 +95,24 @@ Vite 把 `/api/*` 代理到 8789；控制台、页面和 `widget.js` 都在 5173
 
 1. Import `NS-Community/nscha-console`（或你的 fork）。Build Command `prisma generate && pnpm build`、Output Directory `dist`、Framework Preset **Other** 已由 `vercel.json` 固定。
    > `framework: null` 是必须的：依赖 Hono 且存在 `src/app.ts` 时，Vercel 会误判成后端框架项目，进而去 `dist/` 里找 server 入口并报 `No entrypoint found in output directory`。
-2. 环境变量：
-   | Key | 值 |
-   | --- | --- |
-   | `DATABASE_URL` | Neon Postgres 连接池地址（运行时必填，构建期不需要） |
-   | `CONSOLE_JWT_SECRET` | `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
-   | `CONSOLE_ENC_KEY` | 另一个随机 hex，用于加密保存 secret 以便控制台回显 |
-   | `CAP_SECRET` / `CAP_TOKEN_SECRET` | 另两个随机 hex，PoW 与验证令牌签名 |
-   | `NSCHA_PUBLIC_ORIGIN` | `https://guard.nsbbs.eu.cc` |
-   | `CONSOLE_ORIGIN` | `https://guard.nsbbs.eu.cc`（预览通道放行的来源） |
-   | `NSCHA_DOCS_URL` | `https://nscha.nsbbs.eu.cc` |
-3. **首次建表**：从能连到 Neon 的环境执行 `pnpm db:push`（用 `prisma/schema.prisma` 的 Postgres 版）。Vercel 构建期不跑迁移，这一步是显式的一次性动作。
+2. 环境变量（Settings → Environment Variables，**Environment 选 `All environments`**）。
+
+   | Key | 必填 | 值 / 生成方式 |
+   | --- | --- | --- |
+   | `DATABASE_URL` | ✅ 运行时 | Neon Postgres 连接池地址（`?sslmode=require`，pooler 端点适合 Vercel；构建期不需要） |
+   | `CONSOLE_JWT_SECRET` | ✅ | `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
+   | `CONSOLE_ENC_KEY` | ✅ | 另一个随机 hex，AES 加密保存 secret 以便控制台回显 |
+   | `CAP_SECRET` | ✅ | 另一个随机 hex，PoW 与验证令牌签名 |
+   | `CAP_TOKEN_SECRET` | 推荐 | 另一个随机 hex；留空回退到 `CAP_SECRET` |
+   | `NSCHA_PUBLIC_ORIGIN` | 推荐 | `https://guard.nsbbs.eu.cc`（嵌入代码展示的域名） |
+   | `CONSOLE_ORIGIN` | 推荐 | `https://guard.nsbbs.eu.cc`（控制台内预览测试放行的来源；不填则线上无法在控制台里实时测试） |
+   | `NSCHA_DOCS_URL` | 可选 | `https://nscha.nsbbs.eu.cc`（默认值已是该地址） |
+   | `CAP_CHALLENGE_COUNT` / `SIZE` / `DIFFICULTY` / `EXPIRES_SECONDS` / `TOKEN_TTL_SECONDS` | 可选 | 默认 20 / 32 / 3 / 600 / 300 |
+
+   一条命令生成全部密钥：`node -e 'const c=require("crypto");for(const k of ["CONSOLE_JWT_SECRET","CONSOLE_ENC_KEY","CAP_SECRET","CAP_TOKEN_SECRET"])console.log(k+"="+c.randomBytes(48).toString("hex"))'`。
+
+   > `isConfigured()` 要求 `CONSOLE_JWT_SECRET && CONSOLE_ENC_KEY && CAP_SECRET` 同时存在，否则 `/api/health` 返回 `configured:false`、接口 503。改完环境变量需 Redeploy 才生效。
+3. **首次建表**：从能连到 Neon 的环境执行 `DATABASE_URL="<neon>" pnpm exec prisma db push`（用 `prisma/schema.prisma` 的 Postgres 版）。Vercel 构建期不跑迁移，这一步是显式的一次性动作。若 `db:push` 报 `channel_binding` 相关错误，从连接串去掉 `channel_binding=require`（保留 `sslmode=require`），必要时补 `&pgbouncer=true`。
 4. 绑定 `guard.nsbbs.eu.cc`：Settings → Domains，按 Vercel 给出的项目专属 CNAME 值去 Cloudflare 加记录，代理状态设为「仅 DNS / 灰云」，回来 Verify。
 5. 验收：`/api/health` → `{"ok":true,"configured":true}`；`/widget.js` → 200；打开控制台注册并添加一个小组件，把嵌入代码贴到绑定域名的页面上，看到「验证通过」，再用 `secret` 调一次 `/api/verify` 得到 `{ ok: true }`。
 
