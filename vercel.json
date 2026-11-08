@@ -1,0 +1,24 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "prisma generate && pnpm build",
+  "outputDirectory": "dist",
+  "installCommand": "pnpm install --config.dangerouslyAllowAllBuilds=true",
+  "functions": {
+    "api/[...path].ts": { "maxDuration": 10 }
+  },
+  "headers": [
+    {
+      "source": "/widget.js",
+      "headers": [{ "key": "Access-Control-Allow-Origin", "value": "*" }, { "key": "Cache-Control", "value": "public, max-age=300" }]
+    },
+    {
+      "source": "/nscha-solver.js",
+      "headers": [{ "key": "Access-Control-Allow-Origin", "value": "*" }]
+    },
+    {
+      "source": "/cap/(.*)",
+      "headers": [{ "key": "Access-Control-Allow-Origin", "value": "*" }, { "key": "Cross-Origin-Resource-Policy", "value": "cross-origin" }]
+    }
+  ]
+}

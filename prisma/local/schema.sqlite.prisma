@@ -1,0 +1,78 @@
+// Local development schema — SQLite. Model shape is identical to the
+// production Postgres schema so server/*.ts queries need no branching.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  widgets      Widget[]
+  events       Event[]
+}
+
+model Widget {
+  id         String  @id @default(cuid())
+  userId     String
+  name       String
+  sitekey    String  @unique
+  secretHash String  @unique
+  secretEnc  String
+  scope      String  @default("login")
+  scopes     String  @default("login")
+  domains    String
+  theme      String  @default("dark")
+  size       String  @default("standard")
+  label      String  @default("NSCHA")
+  link       String  @default("https://nscha.nsbbs.eu.cc")
+  difficulty String  @default("medium")
+  timeoutSec Int     @default(30)
+  autoRetry  Boolean @default(true)
+  trigger    String  @default("auto")
+  status     String  @default("draft")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usage      UsageDaily[]
+  events     Event[]
+  usedTokens UsedToken[]
+}
+
+model UsageDaily {
+  id         String @id @default(cuid())
+  widgetId   String
+  date       String
+  challenges Int    @default(0)
+  solved     Int    @default(0)
+  verified   Int    @default(0)
+  rejected   Int    @default(0)
+  widget     Widget @relation(fields: [widgetId], references: [id], onDelete: Cascade)
+
+  @@unique([widgetId, date])
+}
+
+model Event {
+  id        String   @id @default(cuid())
+  userId    String
+  widgetId  String?
+  type      String
+  detail    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  widget    Widget?  @relation(fields: [widgetId], references: [id], onDelete: SetNull)
+}
+
+model UsedToken {
+  jti       String   @id
+  widgetId  String
+  expiresAt DateTime
+  widget    Widget   @relation(fields: [widgetId], references: [id], onDelete: Cascade)
+}

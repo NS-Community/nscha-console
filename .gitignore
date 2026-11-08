@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.local
+.env.*.bak
+dev.db
+dev.db-journal
+*.db
+*.db-journal
+dist/
+.vercel/
+*.log
+.DS_Store
+.verify-*

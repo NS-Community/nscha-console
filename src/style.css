@@ -1,0 +1,171 @@
+/* NSCHA Console — Cobalt design system, mirrored from the canvas spec. */
+:root {
+  --bg: #1a1a1a;
+  --surface: #212122;
+  --group: #242424;
+  --input: #1f1f1f;
+  --border: #303030;
+  --brand: #95b806;
+  --brand-dim: #1f2a12;
+  --text: #eaeaea;
+  --text-2: #8a8a8a;
+  --text-3: #5e5e5e;
+  --danger: #cf5c50;
+  --radius-card: 10px;
+  --radius-ctrl: 6px;
+  --mono: 'Geist Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --sans: Geist, 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #app { min-height: 100%; margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--brand); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { font-family: inherit; }
+
+h1, h2, h3, p { margin: 0; }
+
+.mono { font-family: var(--mono); }
+.muted { color: var(--text-2); }
+.faint { color: var(--text-3); }
+.brand { color: var(--brand); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-ctrl);
+  background: var(--brand);
+  color: #1a1a1a;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.sm { height: 34px; padding: 0 16px; font-size: 12px; }
+.btn.ghost {
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  font-weight: 500;
+}
+.btn.ghost:hover { color: var(--text); border-color: #454545; }
+
+label.field { display: block; margin-bottom: 14px; }
+label.field > span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+label.field .hint { color: var(--text-2); font-weight: 400; }
+
+input.input, select.input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-ctrl);
+  background: var(--input);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  outline: none;
+}
+input.input:focus, select.input:focus { border-color: var(--brand); }
+input.input::placeholder { color: var(--text-3); }
+select.input { font-family: var(--mono); }
+
+.segmented { display: flex; gap: 8px; flex-wrap: wrap; }
+.segmented button {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-ctrl);
+  background: var(--input);
+  color: var(--text-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+.segmented button.on {
+  border-color: var(--brand);
+  background: var(--brand-dim);
+  color: var(--brand);
+}
+
+.codeblock {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-ctrl);
+  background: #141414;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+}
+.codeblock .accent { color: var(--brand); }
+
+.notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: var(--radius-ctrl);
+  background: var(--brand-dim);
+  color: var(--brand);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: #2b2b2b;
+  color: var(--text-2);
+  font-size: 11px;
+}
+.tag.on { background: var(--brand-dim); color: var(--brand); }
+
+.error { color: var(--danger); font-size: 12px; min-height: 18px; }
+.ok { color: var(--brand); font-size: 12px; }
+
+.spin {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--border);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
