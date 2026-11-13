@@ -20,5 +20,8 @@
       "source": "/cap/(.*)",
       "headers": [{ "key": "Access-Control-Allow-Origin", "value": "*" }, { "key": "Cross-Origin-Resource-Policy", "value": "cross-origin" }]
     }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
   ]
 }
