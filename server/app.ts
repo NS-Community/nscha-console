@@ -12,7 +12,7 @@
  * api/[...path].ts function regardless of which path shape the platform sends.
  */
 import { Hono, type Context } from 'hono'
-import type { User, Widget } from '@prisma/client'
+import type { User, Widget } from '../prisma/generated/client'
 import { prisma } from './db'
 import { currentUser, loginUser, publicUser, registerUser } from './auth'
 import {

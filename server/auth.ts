@@ -1,7 +1,7 @@
 import { compare, hash } from 'bcryptjs'
 import { sign, verify } from 'hono/jwt'
 import type { Context } from 'hono'
-import type { User } from '@prisma/client'
+import type { User } from '../prisma/generated/client'
 import { prisma } from './db'
 import { readRuntime } from './env'
 

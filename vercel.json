@@ -7,7 +7,11 @@
   "functions": {
     "api/[...path].ts": {
       "maxDuration": 10,
-      "includeFiles": "node_modules/.prisma/client/**"
+      "includeFiles": [
+        "prisma/generated/client/**",
+        "node_modules/.prisma/**",
+        "node_modules/.pnpm/@prisma+client*/node_modules/.prisma/**"
+      ]
     }
   },
   "headers": [

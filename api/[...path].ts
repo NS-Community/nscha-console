@@ -10,17 +10,21 @@
  * app's routes (mounted at both `/` and `/api`) resolve correctly regardless of
  * depth.
  *
- * `framework: null` keeps this project out of the backend-framework preset,
- * which would otherwise look for a server entrypoint inside dist/.
+ * `server/app` (and therefore Prisma) is imported lazily inside the handler, not
+ * at module top level. A top-level `import app` would run `new PrismaClient()`
+ * during cold-load; if the query engine is missing from the bundle the whole
+ * function crashes with a blank FUNCTION_INVOCATION_FAILED. Importing on demand
+ * lets us return the real stack trace instead of a silent 500 — the only way to
+ * debug bundling problems on Vercel.
  */
 import { handle } from '@hono/node-server/vercel'
-import app from '../server/app'
-
-const vercelHandler = handle(app)
 
 const PATH_MARKER = '__nscha_path='
+type VercelHandler = ReturnType<typeof handle>
+let cachedHandler: VercelHandler | null = null
 
-export default async function (req: { url?: string }, res: unknown) {
+export default async function (req: any, res: any) {
+  // Restore the real path from the rewrite before handing off to Hono.
   const raw = req.url || ''
   if (raw.indexOf(PATH_MARKER) !== -1) {
     try {
@@ -35,5 +39,20 @@ export default async function (req: { url?: string }, res: unknown) {
       // Leave req.url untouched if parsing fails.
     }
   }
-  return vercelHandler(req as never, res as never)
+
+  try {
+    if (!cachedHandler) {
+      const appMod = await import('../server/app')
+      cachedHandler = handle(appMod.default)
+    }
+    return cachedHandler(req, res)
+  } catch (err) {
+    const message = err instanceof Error ? (err.stack || err.message) : String(err)
+    if (res && typeof res.setHeader === 'function') {
+      res.statusCode = 500
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+    }
+    if (res && typeof res.end === 'function') res.end('NSCHA_BOOT_ERROR:\n' + message)
+    return
+  }
 }

@@ -2,6 +2,9 @@
 // production Postgres schema so server/*.ts queries need no branching.
 generator client {
   provider = "prisma-client-js"
+  // Mirror the production schema's output so both generate to the same
+  // prisma/generated/client path and server/*.ts imports stay consistent.
+  output   = "../generated/client"
 }
 
 datasource db {
