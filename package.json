@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "description": "NSCHA Console — 中央多租户人机验证服务与站长控制台",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "concurrently -k -n api,web \"pnpm dev:api\" \"pnpm dev:web\"",
     "dev:api": "tsx watch server/index.ts",
@@ -19,11 +21,13 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.0",
+    "@prisma/adapter-pg": "6.16.0",
     "@prisma/client": "^6.16.0",
     "bcryptjs": "^3.0.2",
     "capjs-core": "^0.1.6",
     "dotenv": "^17.2.0",
     "hono": "^4.9.0",
+    "pg": "^8.23.1",
     "vue": "^3.5.0",
     "vue-router": "^4.5.0"
   },
@@ -31,6 +35,7 @@
     "@cap.js/wasm": "^0.0.8",
     "@cap.js/widget": "^0.1.58",
     "@types/node": "^22.15.0",
+    "@types/pg": "^8.23.1",
     "@vitejs/plugin-vue": "^6.0.0",
     "concurrently": "^9.2.0",
     "pako": "^2.1.0",

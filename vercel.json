@@ -6,12 +6,7 @@
   "installCommand": "pnpm install --config.dangerouslyAllowAllBuilds=true",
   "functions": {
     "api/[...path].ts": {
-      "maxDuration": 10,
-      "includeFiles": [
-        "prisma/generated/client/**",
-        "node_modules/.prisma/**",
-        "node_modules/.pnpm/@prisma+client*/node_modules/.prisma/**"
-      ]
+      "maxDuration": 10
     }
   },
   "headers": [

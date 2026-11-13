@@ -3,11 +3,7 @@
 // same TypeScript queries run against both engines.
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
-  // Output into the source tree (not node_modules) so Vercel's bundler
-  // (nft) traces the query-engine binary automatically. With pnpm the default
-  // output lands inside .pnpm and is never bundled, causing a module-load 500.
-  output        = "./generated/client"
+  binaryTargets = ["native"]
 }
 
 datasource db {

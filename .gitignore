@@ -11,4 +11,3 @@ dist/
 *.log
 .DS_Store
 .verify-*
-prisma/generated/
