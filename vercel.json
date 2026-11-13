@@ -5,7 +5,10 @@
   "outputDirectory": "dist",
   "installCommand": "pnpm install --config.dangerouslyAllowAllBuilds=true",
   "functions": {
-    "api/[...path].ts": { "maxDuration": 10 }
+    "api/[...path].ts": {
+      "maxDuration": 10,
+      "includeFiles": "node_modules/.prisma/client/**"
+    }
   },
   "headers": [
     {
@@ -22,6 +25,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
+    { "source": "/api/(.*)", "destination": "/api/_nscha?__nscha_path=/$1" }
   ]
 }
